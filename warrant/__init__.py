@@ -397,7 +397,6 @@ class Cognito(object):
             }
         self._add_secret_hash(auth_params, 'SECRET_HASH')
         tokens = self.client.initiate_auth(
-            UserPoolId=self.user_pool_id,
             ClientId=self.client_id,
             # AuthFlow='USER_SRP_AUTH'|'REFRESH_TOKEN_AUTH'|'REFRESH_TOKEN'|'CUSTOM_AUTH'|'ADMIN_NO_SRP_AUTH',
             AuthFlow='USER_PASSWORD_AUTH',
