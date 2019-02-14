@@ -384,6 +384,30 @@ class Cognito(object):
         self.refresh_token = tokens['AuthenticationResult']['RefreshToken']
         self.verify_token(tokens['AuthenticationResult']['AccessToken'], 'access_token','access')
         self.token_type = tokens['AuthenticationResult']['TokenType']
+        
+    def authenticate_non_srp(self, password):
+        """
+        Authenticate the user using admin super privileges
+        :param password: User's password
+        :return:
+        """
+        auth_params = {
+                'USERNAME': self.username,
+                'PASSWORD': password
+            }
+        self._add_secret_hash(auth_params, 'SECRET_HASH')
+        tokens = self.client.admin_initiate_auth(
+            UserPoolId=self.user_pool_id,
+            ClientId=self.client_id,
+            # AuthFlow='USER_SRP_AUTH'|'REFRESH_TOKEN_AUTH'|'REFRESH_TOKEN'|'CUSTOM_AUTH'|'ADMIN_NO_SRP_AUTH',
+            AuthFlow='USER_PASSWORD_AUTH',
+            AuthParameters=auth_params,
+        )
+
+        self.verify_token(tokens['AuthenticationResult']['IdToken'], 'id_token','id')
+        self.refresh_token = tokens['AuthenticationResult']['RefreshToken']
+        self.verify_token(tokens['AuthenticationResult']['AccessToken'], 'access_token','access')
+        self.token_type = tokens['AuthenticationResult']['TokenType']
 
     def new_password_challenge(self, password, new_password):
         """
